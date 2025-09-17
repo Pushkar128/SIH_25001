@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizens Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg: linear-gradient(180deg,#f0faff,#e0f7fa);
+            --card: #ffffff;
+            --muted: #4b5563;
+            --accent-1: #06b6d4;
+            --accent-2: #7c3aed;
+            --accent-3: #ef4444;
+            --accent-4: #f59e0b;
+            --radius: 16px;
+            --shadow-sm: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-md: 0 16px 40px rgba(0,0,0,0.12);
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
+        *{box-sizing:border-box; margin:0; padding:0;}
+        html,body{height:100%; background: var(--bg); font-size:16px; color:#0f172a; scroll-behavior:smooth;}
+        a{color:inherit; text-decoration:none; transition: color 0.2s;}
+        a:hover{color: var(--accent-2);}
+
+        header{
+            display:flex; justify-content:space-between; align-items:center; padding:18px 28px;
+            background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+            color:white; border-radius:0 0 var(--radius) var(--radius); box-shadow: var(--shadow-md);
+            flex-wrap:wrap;
+        }
+        .brand{font-weight:700; font-size:20px;}
+        nav ul{display:flex; gap:18px; list-style:none;}
+        nav ul li a{
+            color:white; font-weight:500; padding:6px 12px; border-radius:10px;
+            transition:background 0.2s;
+        }
+        nav ul li a:hover{background: rgba(255,255,255,0.15);}
+
+        main{max-width:1000px; margin:32px auto; padding:0 16px;}
+        h1,h2,h3{margin:0 0 12px 0;}
+        p.sub, p{color: var(--muted); margin-bottom:12px;}
+
+        .card{
+            background: var(--card); padding:28px; border-radius: var(--radius); 
+            box-shadow: var(--shadow-md); display:flex; flex-direction:column; gap:18px; 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover{transform: translateY(-4px); box-shadow:0 24px 60px rgba(0,0,0,0.18);}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+        .map-card{
+            display:flex; flex-direction:column; align-items:center;
+            background:rgba(6,182,212,0.15); border:4px solid var(--accent-1); border-radius:var(--radius); 
+            padding:24px; text-align:center; box-shadow:inset 0 4px 12px rgba(0,0,0,0.06); transition: transform 0.3s;
+        }
+        .map-card:hover{transform: scale(1.03);}
+        .map-card h3{font-weight:600;color:var(--accent-1);margin:8px 0;}
+
+        .alerts ul{display:flex;flex-direction:column;gap:12px;padding-left:0;list-style:none;}
+        .alert-red{background:#fee2e2;color:#b91c1c;border-left:4px solid #b91c1c;padding:12px;border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+        .alert-yellow{background:#fef3c7;color:#b45309;border-left:4px solid #b45309;padding:12px;border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+        .alert-green{background:#dcfce7;color:#16a34a;border-left:4px solid #16a34a;padding:12px;border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+
+        .emergency{display:flex;align-items:center;gap:12px;background:red;padding:18px;border-radius:var(--radius);box-shadow:var(--shadow-md);color:white;transition: transform 0.3s;}
+        .emergency:hover{transform: translateY(-3px);}
+
+        .educational{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+        .educational img{width:120px;height:120px;display:block;margin:0 auto;transition: transform 0.3s;}
+        .educational img:hover{transform: scale(1.1);}
+
+        footer{text-align:center;color:var(--muted);padding:32px 0;font-size:14px;margin-top:40px;}
+
+        select {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e6e9ef;
+            background: white;
+            font-size: 14px;
+            width: 200px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width:768px){
+            .grid-2,.educational{grid-template-columns:1fr;}
+            header{flex-direction:column;gap:12px;text-align:center;}
+            nav ul{flex-direction:column; gap:10px;}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">CleanWater — Citizens Portal</div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div>
+            <select id="citySelect" onchange="fetchVillageResults()">
+                <option value="">Select a City</option>
+                <option value="hyderabad">Hyderabad</option>
+                </select>
+        </div>
+
+        <div class="card grid-2">
+            <div>
+                <h2 id="villageName">Village Name: Greenfield</h2>
+                <p id="situationText">Current Situation: Water levels have risen slightly due to recent rainfall, but drinking water supply remains safe.</p>
+                <p id="suggestionsText">Suggestions: Residents are advised to store extra drinking water, avoid using pond water, and stay updated on health alerts.</p>
+                <p id="authorityText">Local authorities are monitoring the situation closely and providing regular updates.</p>
+            </div>
+            <div>
+                <div class="map-card">
+                    <h3 id="villageStatus">Village Status: Safe</h3>
+                    <p id="statusMessage">This village is currently safe. Continue practicing hygiene and water safety.</p>
+                    <ul id="villageResults" style="list-style:none; padding:0; margin-top:10px;"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card alerts">
+            <h2>Alerts & Notifications</h2>
+            <ul>
+                <li class="alert-red">Boil water advisory in your area due to contamination.</li>
+                <li class="alert-yellow">Heavy rainfall increases risk of waterborne diseases.</li>
+                <li class="alert-green">Stay updated on local water testing reports.</li>
+            </ul>
+        </div>
+
+        <div class="card emergency">
+            <div>
+                <h2>Emergency Helpline</h2>
+                <p>Call 108 for medical emergencies, 100 for police, and 101 for fire services.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>About Waterborne Diseases</h2>
+            <div class="educational">
+                <div>
+                    <p>Waterborne diseases are caused by microorganisms transmitted in contaminated water. Examples: cholera, typhoid, dysentery, hepatitis A.</p>
+                    <p>They spread due to poor sanitation, unsafe drinking water, and flooding events. Can cause severe diarrhea, dehydration, or be life-threatening if untreated.</p>
+                    <p>Prevention: Purify/boil drinking water, practice good hygiene, and stay updated on local water quality alerts.</p>
+                </div>
+                <div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/2966/2966486.png" alt="Contaminated Water">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2990/2990510.png" alt="Hygiene">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2927/2927347.png" alt="Safe Drinking Water">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        ©️ 2025 CleanWater. Stay safe.
+    </footer>
+
+    <script>
+        async function fetchVillageResults() {
+            const citySelect = document.getElementById('citySelect');
+            const villageResults = document.getElementById('villageResults');
+            const villageStatus = document.getElementById('villageStatus');
+            const statusMessage = document.getElementById('statusMessage');
+            const villageName = document.getElementById('villageName');
+            const situationText = document.getElementById('situationText');
+            const suggestionsText = document.getElementById('suggestionsText');
+            const authorityText = document.getElementById('authorityText');
+
+            const city = citySelect.value;
+            villageResults.innerHTML = '';
+            villageStatus.textContent = 'Village Status: Loading...';
+            statusMessage.textContent = 'Fetching water quality results...';
+
+            if (city === 'hyderabad') {
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/get-village-results', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ city: 'hyderabad' })
+                    });
+                    const result = await response.json();
+
+                    if (response.ok && result.reports && result.reports.length > 0) {
+                        const allSafe = result.reports.every(report => report.Result === 'Safe');
+                        villageStatus.textContent = `Village Status: ${allSafe ? 'Safe' : 'Unsafe'}`;
+                        statusMessage.textContent = allSafe 
+                            ? 'All water quality reports indicate safe conditions. Continue practicing hygiene and water safety.'
+                            : 'Some water quality reports indicate unsafe conditions. Please follow local advisories.';
+                        villageName.textContent = 'Village Name: Hyderabad Region';
+                        situationText.textContent = allSafe 
+                            ? 'Current Situation: Water quality is safe based on recent reports.'
+                            : 'Current Situation: Some water sources show unsafe quality. Exercise caution.';
+                        suggestionsText.textContent = allSafe 
+                            ? 'Suggestions: Continue using safe water sources and stay updated on health alerts.'
+                            : 'Suggestions: Boil water before use, avoid untreated sources, and monitor health alerts.';
+                        authorityText.textContent = 'Local authorities are monitoring water quality and will provide updates.';
+
+                        result.reports.forEach(report => {
+                            const li = document.createElement('li');
+                            li.textContent = `Water Quality: ${report.Result}`;
+                            li.className = report.Result === 'Safe' ? 'alert-green' : 'alert-red';
+                            villageResults.appendChild(li);
+                        });
+                    } else {
+                        villageStatus.textContent = 'Village Status: No Data';
+                        statusMessage.textContent = 'No water quality reports found for Hyderabad villages.';
+                        villageName.textContent = 'Village Name: Hyderabad Region';
+                        situationText.textContent = 'Current Situation: No recent water quality reports available.';
+                        suggestionsText.textContent = 'Suggestions: Contact local authorities for water quality updates.';
+                        authorityText.textContent = 'Local authorities are working to provide water quality reports.';
+                    }
+                } catch (error) {
+                    console.error('Error fetching results:', error);
+                    villageStatus.textContent = 'Village Status: Error';
+                    statusMessage.textContent = 'Could not fetch water quality results. Please try again later.';
+                }
+            } else {
+                villageStatus.textContent = 'Village Status: Select a City';
+                statusMessage.textContent = 'Please select a city to view water quality results.';
+                villageName.textContent = 'Village Name: Select a City';
+                situationText.textContent = 'Current Situation: Select a city to view the current situation.';
+                suggestionsText.textContent = 'Suggestions: Select a city to view recommendations.';
+                authorityText.textContent = 'Local authorities will provide updates upon city selection.';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Water Quality & Disease Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .status-safe { background: #dcfce7; color: #166534; }
+        .status-warning { background: #fef9c3; color: #92400e; }
+        .status-unsafe { background: #fee2e2; color: #991b1b; }
+        canvas { max-height: 250px; min-height: 200px; margin-top: 20px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold">AQ</div>
+                <div>
+                    <h1 class="font-bold text-lg">AquaCheck</h1>
+                    <p class="text-xs text-gray-500">Water & Health Insights</p>
+                </div>
+            </div>
+            <a href="signup.html" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">Login</a>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-6" id="form">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-3xl">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Advanced Water Quality & Symptom Checker</h2>
+                <p class="text-gray-500 mt-2">Enter water parameters and/or symptoms to check safety & possible diseases.</p>
+            </div>
+
+            <form id="combinedForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">pH</label>
+                    <input type="number" name="ph" step="0.01" placeholder="e.g., 7.2" 
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md" oninput="checkValue(this,'ph')">
+                    <div id="phStatus" class="mt-1 text-sm"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Turbidity (NTU)</label>
+                    <input type="number" name="turbidity" step="0.01" placeholder="e.g., 1.3" 
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md" oninput="checkValue(this,'turbidity')">
+                    <div id="turbidityStatus" class="mt-1 text-sm"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">TDS (mg/L)</label>
+                    <input type="number" name="tds" step="0.01" placeholder="e.g., 307" 
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md" oninput="checkValue(this,'tds')">
+                    <div id="tdsStatus" class="mt-1 text-sm"></div>
+                </div>
+
+                <div class="md:col-span-3 mt-4">
+                    <label class="block text-sm font-medium text-gray-700">Enter Symptoms</label>
+                    <textarea name="symptoms" rows="3" placeholder="e.g., fever, stomach cramps" 
+                              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+
+                <button type="submit" id="submitButton" 
+                        class="w-full md:col-span-3 mt-2 flex justify-center py-3 px-4 border rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                    Check Health & Water Safety
+                </button>
+            </form>
+
+            <div id="resultContainer" class="mt-6 hidden">
+                <div id="resultBox" class="p-4 rounded-md text-center" role="alert">
+                    <div id="resultText"></div>
+                    <canvas id="phChart"></canvas>
+                    <canvas id="turbidityChart"></canvas>
+                    <canvas id="tdsChart"></canvas>
+                    <p id="recommendationText" class="text-sm mt-2"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 text-center text-sm text-gray-600 py-4">
+        © 2025 AquaCheck. Built for Community Health Awareness.
+    </footer>
+
+    <script>
+        // Live validation
+        function checkValue(input, type) {
+            const value = parseFloat(input.value);
+            const statusEl = document.getElementById(type + "Status");
+            statusEl.className = "mt-1 text-sm p-1 rounded";
+
+            if (isNaN(value)) { statusEl.textContent = ""; return; }
+
+            if (type === "ph") {
+                if (value >= 6.5 && value <= 8.5) { statusEl.textContent = "✅ Safe for drinking (6.5–8.5)"; statusEl.classList.add("status-safe"); }
+                else { statusEl.textContent = "⚠️ Unsafe pH for drinking"; statusEl.classList.add("status-unsafe"); }
+            }
+            else if (type === "turbidity") {
+                if (value <= 1) { statusEl.textContent = "✅ Excellent (≤1 NTU)"; statusEl.classList.add("status-safe"); }
+                else if (value <= 5) { statusEl.textContent = "⚠️ Acceptable (1–5 NTU)"; statusEl.classList.add("status-warning"); }
+                else { statusEl.textContent = "❌ Unsafe (>5 NTU)"; statusEl.classList.add("status-unsafe"); }
+            }
+            else if (type === "tds") {
+                if (value <= 500) { statusEl.textContent = "✅ Safe for drinking (≤500 mg/L)"; statusEl.classList.add("status-safe"); }
+                else if (value <= 1000) { statusEl.textContent = "⚠️ Acceptable (500–1000 mg/L)"; statusEl.classList.add("status-warning"); }
+                else { statusEl.textContent = "❌ Unsafe (>1000 mg/L)"; statusEl.classList.add("status-unsafe"); }
+            }
+        }
+
+        // Chart maker function
+        function makeChart(canvasId, value, min, max, annotations) {
+            return new Chart(document.getElementById(canvasId), {
+                type: "scatter",
+                data: {
+                    datasets: [
+                        {
+                            label: "Your Value",
+                            data: [{ x: 1, y: value }],
+                            backgroundColor: "red",
+                            pointRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                        annotation: {
+                            annotations: annotations
+                        }
+                    },
+                    scales: {
+                        x: { display: false, min: 0, max: 2 },
+                        y: { min: min, max: max }
+                    }
+                }
+            });
+        }
+
+        // Submit handler
+        const form = document.getElementById('combinedForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultText = document.getElementById('resultText');
+        const submitButton = document.getElementById('submitButton');
+        let phChart, turbidityChart, tdsChart;
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            submitButton.disabled = true;
+            submitButton.textContent = 'Checking...';
+            resultContainer.classList.add('hidden');
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => { if (value) data[key] = parseFloat(value) || value; });
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/submit-report", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                let output = "";
+                if (result.quality_category) { output += `<p class="font-bold">Water Quality: ${result.quality_category}</p>`; }
+                if (result.diseases) { output += `<p class="mt-2 font-bold">Possible Diseases: ${result.diseases.join(", ")}</p>`; }
+                resultText.innerHTML = output;
+
+                if (phChart) phChart.destroy();
+                if (turbidityChart) turbidityChart.destroy();
+                if (tdsChart) tdsChart.destroy();
+
+                // Use input_values from response for charts
+                const inputValues = result.input_values || {};
+
+                if (inputValues.ph) {
+                    phChart = makeChart("phChart", inputValues.ph, 0, 14, {
+                        safeZone: { type: 'box', yMin: 6.5, yMax: 8.5, backgroundColor: 'rgba(74, 222, 128, 0.25)', borderColor: 'transparent' },
+                        lowerBound: { type: 'line', yMin: 6.5, yMax: 6.5, borderColor: 'green', borderWidth: 2, label: { content: 'Safe ≥ 6.5', enabled: true, position: 'start' } },
+                        upperBound: { type: 'line', yMin: 8.5, yMax: 8.5, borderColor: 'green', borderWidth: 2, label: { content: 'Safe ≤ 8.5', enabled: true, position: 'start' } }
+                    });
+                }
+                
+                if (inputValues.turbidity) {
+                    turbidityChart = makeChart("turbidityChart", inputValues.turbidity, 0, 20, {
+                        safe: { type: "line", yMin: 1, yMax: 1, borderColor: "green", borderWidth: 2, label: { content: "Safe ≤ 1", enabled: true } }
+                    });
+                }
+
+                if (inputValues.tds) {
+                    tdsChart = makeChart("tdsChart", inputValues.tds, 0, 2000, {
+                        safe: { type: "line", yMin: 500, yMax: 500, borderColor: "green", borderWidth: 2, label: { content: "Safe ≤ 500", enabled: true } }
+                    });
+                }
+
+            } catch (error) {
+                resultText.innerHTML = '<span class="font-bold">Connection Error:</span> Could not reach the server.';
+            } finally {
+                resultContainer.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Check Health & Water Safety';
+            }
+        });
+    </script>
+</body>
+</html>

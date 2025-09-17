@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CleanWater — Waterborne Illness Reporting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#f7f9fc;--card:#ffffff;--muted:#6b7280;--accent-1:#0ea5a4;--accent-2:#6366f1;--accent-3:#fb7185;--accent-4:#f59e0b;--glass:rgba(255,255,255,0.6);--radius:12px;--shadow-sm:0 6px 18px rgba(16,24,40,0.06);--shadow-md:0 12px 30px rgba(16,24,40,0.08);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color-scheme:light}
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7fbfb 0%,var(--bg) 100%);font-size:16px;color:#0f172a}
+        a{color:inherit;text-decoration:none}
+        .container{max-width:1100px;margin:0 auto;padding:28px}
+        header{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+        .brand{display:flex;gap:12px;align-items:center;animation:fadeIn 0.5s ease-out}
+        .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:white;font-weight:700;font-size:18px;box-shadow:var(--shadow-sm)}
+        nav{display:flex;gap:18px;align-items:center}
+        .nav-links{display:flex;gap:16px}
+        .nav-links a{position:relative;padding:4px 0;opacity:0;animation:navFadeIn 0.5s ease-out forwards}
+        .nav-links a:nth-child(1){animation-delay:0.1s}
+        .nav-links a:nth-child(2){animation-delay:0.2s}
+        .nav-links a:nth-child(3){animation-delay:0.3s}
+        .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent-2);transition:width 0.3s ease}
+        .nav-links a:hover::after{width:100%}
+        .nav-links a:hover{color:var(--accent-2)}
+        .btn{padding:9px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+        .btn-ghost{background:transparent;color:var(--muted)}
+        .btn-primary{background:linear-gradient(90deg,var(--accent-2),var(--accent-1));color:white;box-shadow:var(--shadow-sm)}
+        .hero{display:flex;gap:28px;align-items:center;margin:26px 0;padding:28px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0.6));box-shadow:var(--shadow-md)}
+        .hero-left{flex:1}
+        .hero h1{margin:0;font-size:28px;line-height:1.05}
+        .sub{color:var(--muted);margin-top:10px}
+        .hero-ctas{margin-top:18px;display:flex;gap:12px}
+        .hero-right{width:360px;flex-shrink:0;display:flex;justify-content:center;align-items:center}
+        .roles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:26px 0}
+        .card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:12px;min-height:140px;transform-origin:center;animation:cardFadeIn 0.5s ease-out forwards; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease}
+        .card:hover{transform:scale(1.05);box-shadow:0 12px 30px rgba(16,24,40,0.15)}
+        .role-title{font-weight:700}
+        .small{font-size:14px;color:var(--muted)}
+        .grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-bottom:26px}
+        .info{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:var(--shadow-sm)}
+        .dashboard{padding:16px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff7ed);box-shadow:var(--shadow-sm)}
+        footer{background:linear-gradient(90deg,#f7f9fc,#e0e7ff);padding:24px 0;text-align:center;animation:footerFadeIn 0.7s ease-out}
+        footer .small{opacity:0;animation:fadeInText 0.5s ease-out 0.2s forwards}
+        footer .socials{margin-top:12px;display:flex;gap:16px;justify-content:center}
+        footer .socials a{transition:transform 0.3s ease}
+        footer .socials a:hover{transform:scale(1.2)}
+        .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;padding:20px}
+        .modal{background:var(--card);padding:18px;border-radius:12px;max-width:420px;width:100%;box-shadow:var(--shadow-md)}
+        .field{display:flex;flex-direction:column;gap:6px}
+        .input{padding:10px 12px;border-radius:8px;border:1px solid #e6e9ef;background:white}
+        label{font-weight:600;font-size:14px}
+        .actions{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:12px}
+        @media (max-width:920px){.roles{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.hero{flex-direction:column-reverse;align-items:flex-start}.hero-right{width:100%}}
+        @media (max-width:520px){.roles{grid-template-columns:1fr}nav .nav-links{display:none;animation:none}.nav-links a{opacity:1}}
+        .muted{color:var(--muted)}
+        .accent-1{color:var(--accent-1)}
+        .accent-2{color:var(--accent-2)}
+        .accent-3{color:var(--accent-3)}
+        .accent-4{color:var(--accent-4)}
+        button:focus{outline:3px solid rgba(99,102,241,0.18);outline-offset:2px}
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes footerFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInText {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <div class="logo">CW</div>
+                <div>
+                    <div style="font-weight:700">CleanWater</div>
+                    <div style="font-size:13px;color:var(--muted)">Community water & health reports</div>
+                </div>
+            </div>
+            <nav>
+                <div class="nav-links">
+                    <a href="#home" class="small muted">Home</a>
+                    <a href="#features" class="small muted">Features</a>
+                    <a href="#info" class="small muted">About</a>
+                </div>
+                <a href="signup.html" class="btn btn-ghost">Login / Sign Up</a>
+            </nav>
+        </header>
+
+        <section class="hero" id="home" aria-labelledby="hero-heading">
+            <div class="hero-left">
+                <h1 id="hero-heading">Collect, report and respond to waterborne illness risks — fast.</h1>
+                <p class="sub">A role-based reporting platform for ASHA workers, doctors, villagers and health officials. Submit water tests, patient counts, and symptom reports — get real-time alerts and dashboards.</p>
+                <div class="hero-ctas">
+                    <!-- <button class="btn btn-primary" onclick="openModal()">Report Now</button> -->
+                    <a href="#info" class="btn btn-ghost">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-right" aria-hidden="true">
+                <svg width="260" height="170" viewBox="0 0 260 170" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;box-shadow:var(--shadow-sm)"><rect width="260" height="170" rx="12" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-weight="700" font-size="16">Illustration</text><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0ea5a4"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs></svg>
+            </div>
+        </section>
+
+        <!-- Water Quality Tester Section (styled like roles) -->
+        <section id="tester" class="roles" aria-label="Water Quality Tester">
+            <div class="card" style="grid-column: span 4;">
+                <div class="role-title">Water Quality Tester <span style="color:var(--accent-2);">(Mainly for ASHA Workers)</span></div>
+                <div class="small">Use our advanced tools to check water potability based on key parameters like pH, TDS, and turbidity. Get instant safety predictions from our machine learning model.</div>
+                <div style="margin-top:auto">
+                    <a href="watertester.html" class="btn pill accent-2">Check Water Quality</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="roles" aria-label="Role cards">
+            <div class="card accent-1" onclick="window.open('asha.html', '_blank')">
+                <div class="role-title">ASHA Worker</div>
+                <div class="small">Report village water test results and submit geotagged samples. Offline-first forms available.</div>
+            </div>
+            <div class="card accent-2" onclick="window.open('doctor.html', '_blank')">
+                <div class="role-title">Doctor</div>
+                <div class="small">Submit patient counts, link suspected cases to water reports, and push alerts to officials.</div>
+            </div>
+            <div class="card accent-3" onclick="window.open('citizen.html', '_blank')">
+                <div class="role-title">Citizen</div>
+                <div class="small">Self-report symptoms, view local alerts, and request health visits.</div>
+            </div>
+            <div class="card accent-4" onclick="window.open('official.html', '_blank')">
+                <div class="role-title">Health Official</div>
+                <div class="small">See village dashboards, manage alerts, and mark investigations as resolved.</div>
+            </div>
+        </section>
+
+        <section class="grid-2">
+            <div class="info" id="info">
+                <h3 style="margin-top:0">About waterborne diseases</h3>
+                <p class="muted">Waterborne illnesses spread via contaminated water. Quick facts:</p>
+                <ul class="muted" style="margin-top:8px">
+                    <li>Common causes: fecal contamination, poor sanitation, unsafe drinking sources.</li>
+                    <li>Symptoms: diarrhea, vomiting, fever — monitor vulnerable groups (children, elderly).</li>
+                    <li>Prevention: boiling, chlorination, safe storage, improved sanitation & hygiene.</li>
+                </ul>
+                <p style="margin-top:12px" class="small">This platform helps capture local test results and health reports so officials can act quickly.</p>
+                <a href="#" class="small">Read more →</a>
+            </div>
+            <aside class="dashboard" aria-label="Dashboard preview">
+                <h4 style="margin:0 0 8px 0">Alerts — Sample</h4>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Village: Riverbend</strong><div class="small muted">High E. coli levels detected</div></div>
+                        <div style="padding:6px 10px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:13px">High</div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Village: Sundarpur</strong><div class="small muted">Increased diarrhea cases</div></div>
+                        <div style="padding:6px 10px;border-radius:999px;background:#fff7ed;color:#c2410c;font-weight:700;font-size:13px">Alert</div>
+                    </div>
+                    <div style="border-top:1px dashed rgba(15,23,42,0.06);padding-top:10px" class="small muted">Click a role card to open the respective dashboard.</div>
+                </div>
+            </aside>
+        </section>
+
+        <footer>
+            <div class="small muted">© 2025 CleanWater. Built for the Hackathon.</div>
+            <div class="socials">
+                <a href="https://facebook.com" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--muted)"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H7v-3h3V9.8C10 7.34 11.34 6 13.8 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v4.8c4.56-.93 8-4.96 8-9.8 0-5.52-4.48-10-10-10z"/></svg></a>
+                <a href="https://twitter.com" aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--muted)"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.18 4 15.93 4c-2.1 0-3.8 1.7-3.8 3.8 0 .3.03.59.09.86-3.16-.16-5.96-1.67-7.83-3.97-.33.57-.52 1.23-.52 1.94 0 1.34.68 2.52 1.72 3.21-.63-.02-1.23-.19-1.75-.48v.05c0 1.84 1.31 3.37 3.05 3.72-.32.09-.66.14-1.01.14-.24 0-.48-.02-.71-.07.48 1.5 1.87 2.59 3.52 2.62-1.29 1.01-2.91 1.61-4.68 1.61-.3 0-.6-.02-.89-.06 1.67 1.07 3.65 1.69 5.78 1.69 6.93 0 10.73-5.75 10.73-10.74 0-.17 0-.33-.01-.5.74-.53 1.38-1.2 1.88-1.96z"/></svg></a>
+                <a href="https://instagram.com" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--muted)"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.233.299 2.735.667.577.365 1.006.866 1.46 1.32.453.454.955.883 1.32 1.46.368.502.605 1.369.667 2.735.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.299 2.233-.667 2.735-.365.577-.866 1.006-1.32 1.46-.454.453-.883.955-1.46 1.32-.502.368-1.369.605-2.735.667-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.233-.299-2.735-.667-.577-.365-1.006-.866-1.46-1.32-.453-.454-.955-.883-1.32-1.46-.368-.502-.605-1.369-.667-2.735-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.299-2.233.667-2.735.365-.577.866-1.006 1.32-1.46.454-.453.883-.955 1.46-1.32.502-.368 1.369-.605 2.735-.667 1.266-.058 1.646-.07 4.85-.07m0-2.163c-3.259 0-3.67.014-4.95.072-1.315.065-2.527.308-3.644.697-.988.35-1.883.822-2.732 1.67-.848.849-1.32 1.744-1.67 2.732-.388 1.117-.632 2.329-.697 3.644-.057 1.281-.072 1.691-.072 4.95s.015 3.67.072 4.95c.065 1.315.308 2.527.697 3.644.35.988.822 1.883 1.67 2.732.849.848 1.744 1.32 2.732 1.67 1.117.388 2.329.632 3.644.697 1.281.057 1.691.072 4.95.072s3.67-.015 4.95-.072c1.315-.065 2.527-.308 3.644-.697.988-.35 1.883-.822 2.732-1.67.848-.849 1.32-1.744 1.67-2.732.388-1.117.632-2.329.697-3.644.057-1.281.072-1.691.072-4.95s-.015-3.67-.072-4.95c-.065-1.315-.308-2.527-.697-3.644-.35-.988-.822-1.883-1.67-2.732-.849-.848-1.744-1.32-2.732-1.67-1.117-.388-2.329-.632-3.644-.697-1.281-.057-1.691-.072-4.95-.072"/></svg></a>
+            </div>
+        </footer>
+    </div>
+
+    <div class="modal-backdrop" id="modal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <h3 id="modal-title" style="margin:0">Login</h3>
+                <button onclick="closeModal()" aria-label="Close" style="background:transparent;border:0;font-size:18px;cursor:pointer">&times;</button>
+            </div>
+            <form onsubmit="event.preventDefault();alert('Pretend logging in — this is a demo');closeModal()" style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+                <div class="field">
+                    <label for="email" id="email-label">Email or Phone Number</label>
+                    <input id="email" class="input" placeholder="you@gmail.com or 9876543210" required>
+                </div>
+                <div class="field">
+                    <label for="pass">Password</label>
+                    <input id="pass" type="password" class="input" placeholder="••••••" required>
+                </div>
+                <div class="field">
+                    <label for="role">Role</label>
+                    <select id="role" class="input" required onchange="updateLoginFields()"><option>ASHA</option><option>Doctor</option><option>Citizen</option><option>Official</option></select>
+                </div>
+                <div class="actions">
+                    <div style="display:flex;align-items:center;gap:8px"><input id="remember" type="checkbox"><label for="remember" class="small">Remember me</label></div>
+                    <div style="display:flex;gap:8px"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">Sign in</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        function openModal(role){
+            modal.style.display = 'flex';
+            if(role){
+                const sel = document.getElementById('role');
+                if(sel) sel.value = role === 'Official' ? 'Official' : role;
+                updateLoginFields();
+            }
+            document.getElementById('email').focus();
+        }
+        function closeModal(){ modal.style.display = 'none'; }
+        
+        modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+        function updateLoginFields() {
+            const role = document.getElementById('role').value;
+            const label = document.getElementById('email-label');
+            const input = document.getElementById('email');
+            if(role === 'ASHA') {
+                label.textContent = 'Enter ASHA ID';
+                input.placeholder = 'example: NEIA-0508';
+            } else if(role === 'Doctor') {
+                label.textContent = 'Enter DOCTOR ID';
+                input.placeholder = 'example: 1234567890';
+            } else if(role === 'Citizen') {
+                label.textContent = 'Email or Phone Number';
+                input.placeholder = 'you@gmail.com or 9876543210';
+            } else if(role === 'Official') {
+                label.textContent = 'Email or Phone Number';
+                input.placeholder = 'you@gmail.com or 9876543210';
+            }
+        }
+        updateLoginFields();
+    </script>
+</body>
+</html>
